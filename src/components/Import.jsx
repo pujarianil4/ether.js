@@ -34,6 +34,8 @@ export default function Import({ wallet, show }) {
         setWallet(wallet)
     }
   }, [walletP, wallet]);
+
+  
   return (
     <>
       {isLoading ? (
