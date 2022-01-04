@@ -1,0 +1,20 @@
+.importContainer{
+
+}
+
+.details{
+    text-align: left;
+}
+
+span{
+    font-size: 13px;
+    color: gray;
+}
+
+input{
+    width: 80%;
+    height: 30px;
+    border: 1px solid gray;
+    border-radius: 5px;
+    padding-left: 10px;
+}

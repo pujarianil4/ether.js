@@ -1,19 +1,33 @@
 import React from "react";
 import { ethers } from "ethers";
+import './import.css'
 export default function Import({ wallet, show }) {
   const [input, setInput] = React.useState("");
   const [balance, setBalance] = React.useState("");
   const [address, setAddress] = React.useState("");
   const [walletP, setWallet] = React.useState(null);
   const [isLoading, setLoading] = React.useState(false);
-  let provider = ethers.getDefaultProvider();
+ const privateKey = localStorage.getItem("privateKey");
+ 
+  
+  const [showKey, setShowKey] = React.useState(false);
+  let provider = ethers.getDefaultProvider("rinkeby");
 
   const handleImport = async () => {
+    setLoading(true);
+    localStorage.setItem("privateKey", input);
     const walletPrivate = new ethers.Wallet(input);
     setWallet(walletPrivate);
+    setAddress(walletPrivate.address);
+    let balanceHex = await provider.getBalance(walletPrivate.address);
+    let balance = ethers.utils.formatUnits(balanceHex);
+    setBalance(balance);
+    setLoading(false);
   };
 
   const getWalletDetails = async (walletPrivate) => {
+
+    localStorage.setItem("privateKey", walletPrivate.privateKey);
     setLoading(true);
     try {
       let wallet = await walletPrivate.connect(provider);
@@ -22,18 +36,33 @@ export default function Import({ wallet, show }) {
       let balance = ethers.utils.formatUnits(balanceHex);
       setBalance(balance);
     } catch (error) {
+      console.log("error");
     } finally {
       setLoading(false);
     }
   };
 
+
+ 
+
   React.useEffect(() => {
-    if (walletP) {
-      getWalletDetails(walletP);
-    } else {
-        setWallet(wallet)
+    if(privateKey ){
+      setInput(privateKey);
     }
-  }, [walletP, wallet]);
+  }, []);
+  React.useEffect(() => {
+    if(privateKey === input && wallet === null){
+      handleImport();
+    }
+  }, [input]);
+
+
+  React.useEffect(() => {
+    if (wallet) {
+      setWallet(wallet);
+      getWalletDetails(wallet);
+    }
+  }, [wallet]);
 
   
   return (
@@ -44,19 +73,23 @@ export default function Import({ wallet, show }) {
         <div>
           {show && (
             <>
-              <input type="text" onChange={(e) => setInput(e.target.value)} />
+              <input placeholder="Enter Private Key" type="text" onChange={(e) => setInput(e.target.value)} />
               <button onClick={handleImport}>IMPORT</button>
             </>
           )}
-          {address && balance && (
+         
             <div>
-              <h1>Address: {address}</h1>
-              <h1>Balance: {balance} ETH</h1>
-              { !show&&<h1>Private Key : {walletP.privateKey}</h1>}
+            <div className="details">
+              <h3>Address: <span>{address}</span></h3>
+              <h3>Balance: <span>{balance}</span> ETH</h3>
+              { <h3>Private Key :  <input type={showKey? "text": "password"} value={walletP?.privateKey} disabled/> <span> <button onClick={()=> setShowKey(!showKey)}>View</button> </span></h3>}
             </div>
-          )}
+          
+            </div>
+        
         </div>
       )}
+        
     </>
   );
 }

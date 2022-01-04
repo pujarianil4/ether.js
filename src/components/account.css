@@ -1,0 +1,22 @@
+.container{
+  display: flex;
+  justify-content: stretch;
+}
+.account,.transaction{
+    height: 90vh;
+    width: 50%;
+    border: 1px solid gray;
+}
+
+.historyDiv{
+    height: 52vh;
+    overflow-y: scroll;
+}
+.historyBlock{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 10px;
+    border: 1px solid gray;
+    margin: 5px;
+}
